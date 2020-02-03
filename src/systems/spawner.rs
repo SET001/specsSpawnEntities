@@ -17,7 +17,7 @@ impl<'a> System<'a> for ZombieSpawner {
   fn run(&mut self, (entities, views, positions, updater): Self::SystemData) {
     use specs::Join;
     let count = (&views, &positions).join().count();
-    if count < 2000{
+    if count < 20000{
       let mut rng = rand::thread_rng();
       let enemy = entities.create();
       updater.insert(enemy, Position {

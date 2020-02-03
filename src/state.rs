@@ -14,11 +14,13 @@ use crate::systems::{
 
 pub struct MainState{
 	dispatcher: Dispatcher<'static, 'static>,
-	world: World
+  world: World,
+  circle: graphics::Mesh,
+  font: graphics::Font
 }
 
 impl MainState{ 
-	pub fn new() -> MainState{
+	pub fn new(circle: graphics::Mesh, font: graphics::Font) -> MainState{
 		let mut world = World::new();
 		world.register::<Position>();
     world.register::<Velocity>();
@@ -29,10 +31,12 @@ impl MainState{
       .with(LinearMovement, "LinearMovement", &[])
       .with(ZombieSpawner, "ZombieSpawner", &[])
 			.build();
-
+    
 		MainState {
 			world,
-			dispatcher,
+      dispatcher,
+      circle,
+      font
 		}
 	}
 }
@@ -54,33 +58,20 @@ impl event::EventHandler for MainState {
     graphics::clear(ctx, graphics::BLACK);
     let a = (&view_comp, &position_comp).join();
     let count = (&view_comp, &position_comp).join().count();
+    
     for (view, position) in a {
-      let circle = graphics::Mesh::new_circle(
-        ctx,
-        view.args.drawMode,
-        Point2::new(position.x, position.y),
-        view.args.radius,
-        view.args.tolerance,
-        view.args.color,
-      )?;
+      
       graphics::draw(
         ctx,
-        &circle,
+        &self.circle,
         (Point2::new(position.x, position.y),),
       ).unwrap();
     }
 
-    let font = graphics::Font::new(ctx, "/DejaVuSerif.ttf")?;
     let dest_point = cgmath::Point2::new(1.0, 10.0);
-    let stext = format!("Entities: {}", count);
-    let counterText = graphics::Text::new((stext, font, 48.0));
+    let stext = format!("Entities: {}\nFPS: {}", count, timer::fps(ctx).floor());
+    let counterText = graphics::Text::new((stext, self.font, 48.0));
     graphics::draw(ctx, &counterText, (dest_point,))?;
-
-    let fpsText = graphics::Text::new((
-      format!("FPS: {}", timer::fps(ctx)),
-      font,
-      48.0));
-    graphics::draw(ctx, &fpsText, (cgmath::Point2::new(1.0, 60.0),))?;
     graphics::present(ctx)?;
 		Ok(())
 	}
