@@ -1,6 +1,7 @@
 use specs::{World, WorldExt, Dispatcher, DispatcherBuilder};
 use ggez::{GameResult, Context};
 use ggez::event;
+use ggez::timer;
 use ggez::graphics;
 use cgmath::{Point2};
 
@@ -51,7 +52,9 @@ impl event::EventHandler for MainState {
     let position_comp = self.world.read_storage::<Position>();
     
     graphics::clear(ctx, graphics::BLACK);
-    for (view, position) in (&view_comp, &position_comp).join() {
+    let a = (&view_comp, &position_comp).join();
+    let count = (&view_comp, &position_comp).join().count();
+    for (view, position) in a {
       let circle = graphics::Mesh::new_circle(
         ctx,
         view.args.drawMode,
@@ -66,6 +69,18 @@ impl event::EventHandler for MainState {
         (Point2::new(position.x, position.y),),
       ).unwrap();
     }
+
+    let font = graphics::Font::new(ctx, "/DejaVuSerif.ttf")?;
+    let dest_point = cgmath::Point2::new(1.0, 10.0);
+    let stext = format!("Entities: {}", count);
+    let counterText = graphics::Text::new((stext, font, 48.0));
+    graphics::draw(ctx, &counterText, (dest_point,))?;
+
+    let fpsText = graphics::Text::new((
+      format!("FPS: {}", timer::fps(ctx)),
+      font,
+      48.0));
+    graphics::draw(ctx, &fpsText, (cgmath::Point2::new(1.0, 60.0),))?;
     graphics::present(ctx)?;
 		Ok(())
 	}
