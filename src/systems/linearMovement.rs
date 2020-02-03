@@ -1,4 +1,4 @@
-use specs::{System, ReadStorage};
+use specs::{System, ReadStorage, WriteStorage};
 
 use crate::componets::{Position, Target};
 
@@ -6,11 +6,13 @@ pub struct LinearMovement;
 
 impl<'a> System<'a> for LinearMovement {
   type SystemData = (
-    ReadStorage<'a, Position>,
+    WriteStorage<'a, Position>,
     ReadStorage<'a, Target>
   );
-
-  fn run(&mut self, position: Self::SystemData) {
-    
+  fn run(&mut self, (mut position, target): Self::SystemData) {
+    use specs::Join;
+    for (position, target) in (&mut position, &target).join() {
+      position.x += 1.0;
+    }
   }
 }
