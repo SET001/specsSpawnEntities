@@ -1,9 +1,8 @@
-use specs::{World, WorldExt, Builder, Dispatcher, DispatcherBuilder};
+use specs::{World, WorldExt, Dispatcher, DispatcherBuilder};
 use ggez::{GameResult, Context};
 use ggez::event;
 use ggez::graphics;
 use cgmath::{Point2};
-use rand::Rng;
 
 use crate::componets::*;
 use crate::systems::{
@@ -13,27 +12,19 @@ use crate::systems::{
 // use components::*;
 
 pub struct MainState{
-	frame: i32,
 	dispatcher: Dispatcher<'static, 'static>,
 	world: World
 }
 
-struct Foo<'a>{
-  ctx: &'a mut Context
-}
-
 impl MainState{ 
-	pub fn new(ctx: &mut Context) -> MainState{
+	pub fn new() -> MainState{
 		let mut world = World::new();
 		world.register::<Position>();
     world.register::<Velocity>();
     world.register::<Target>();
     world.register::<View>();
-  
-    let mut rng = rand::thread_rng();
-    let spawnChance = rng.gen_range(0.0, 10.0);
 
-    let mut dispatcher = DispatcherBuilder::new()
+    let dispatcher = DispatcherBuilder::new()
       .with(LinearMovement, "LinearMovement", &[])
       .with(ZombieSpawner, "ZombieSpawner", &[])
 			.build();
@@ -41,7 +32,6 @@ impl MainState{
 		MainState {
 			world,
 			dispatcher,
-			frame: 0
 		}
 	}
 }
@@ -76,7 +66,7 @@ impl event::EventHandler for MainState {
         (Point2::new(position.x, position.y),),
       ).unwrap();
     }
-    graphics::present(ctx);
+    graphics::present(ctx)?;
 		Ok(())
 	}
 }

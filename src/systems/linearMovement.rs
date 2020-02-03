@@ -11,7 +11,7 @@ impl<'a> System<'a> for LinearMovement {
   );
   fn run(&mut self, (mut position, target): Self::SystemData) {
     use specs::Join;
-    for (position, target) in (&mut position, &target).join() {
+    for (position, _target) in (&mut position, &target).join() {
       position.x += 1.0;
     }
   }
