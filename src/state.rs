@@ -60,12 +60,13 @@ impl event::EventHandler for MainState {
     let count = (&view_comp, &position_comp).join().count();
     
     for (view, position) in a {
-      
-      graphics::draw(
-        ctx,
-        &self.circle,
-        (Point2::new(position.x, position.y),),
-      ).unwrap();
+      if position.x < 2000.0{
+        graphics::draw(
+          ctx,
+          &self.circle,
+          (Point2::new(position.x, position.y),),
+        ).unwrap();
+      }
     }
 
     let dest_point = cgmath::Point2::new(1.0, 10.0);

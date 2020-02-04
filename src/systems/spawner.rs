@@ -1,5 +1,4 @@
 use specs::{System, ReadStorage, Entities, Read, LazyUpdate};
-use ggez::{Context};
 use rand::Rng;
 
 use crate::componets::{Position, View, Target};
@@ -17,7 +16,7 @@ impl<'a> System<'a> for ZombieSpawner {
   fn run(&mut self, (entities, views, positions, updater): Self::SystemData) {
     use specs::Join;
     let count = (&views, &positions).join().count();
-    if count < 20000{
+    if count < 200000{
       let mut rng = rand::thread_rng();
       let enemy = entities.create();
       updater.insert(enemy, Position {

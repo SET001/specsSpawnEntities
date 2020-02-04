@@ -33,13 +33,3 @@ impl View {
     }
   }
 }
-
-
-// let circle = graphics::Mesh::new_circle(
-//     ctx,
-//     graphics::DrawMode::fill(),
-//     na::Point2::new(blob.position.x, blob.position.y),
-//     blob.radius,
-//     0.1,
-//     graphics::WHITE,
-//   )?;
